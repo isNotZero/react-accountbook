@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+
+
 import { ElInput, ElDatetime, ElButton } from '../components/Elements'
 import { useDialog } from '../context/DialogContext';
 
@@ -16,6 +19,8 @@ function getNow() {
 }
 
 export default function CreateData() {
+  const navigate = useNavigate()
+
   const dialog = useDialog()
   const [params, setParams] = useState({
     date: getNow().date,
@@ -43,7 +48,8 @@ export default function CreateData() {
         ...params,
         datetime: `${params.date}T${params.time}`
       })
-      dialog.alert('추가되었습니다.')
+      await dialog.alert('추가되었습니다.')
+      navigate('/')
     } catch (error) {
       console.error(error)
     }
@@ -54,17 +60,17 @@ export default function CreateData() {
       <h3 className="title">추가</h3>
       <div className="flex flex-col gap-y-4">
         <ElDatetime
-          label="datetime"
+          label="날짜"
           date={params.date}
           time={params.time}
           onInputDate={(e) => handleInput(e, 'date')}
           onInputTime={(e) => handleInput(e, 'time')}
         />
-        <ElInput label="amount" value={params.amount} onInput={(e) => handleInput(e, 'amount')}/>
-        <ElInput label="memo" value={params.memo} onInput={(e) => handleInput(e, 'memo')}/>
+        <ElInput label="금액" value={params.amount} onInput={(e) => handleInput(e, 'amount')}/>
+        <ElInput label="메모" value={params.memo} onInput={(e) => handleInput(e, 'memo')}/>
       </div>
       <div className="flex justify-center">
-        <ElButton onClick={addData}>add</ElButton>
+        <ElButton onClick={addData}>추가</ElButton>
       </div>
     </div>
   )
