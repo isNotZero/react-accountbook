@@ -30,9 +30,11 @@ export default function CreateData() {
   })
   
   useEffect(() => {
+    common.setLoading(true)
     getDoc(doc(db, "usageHistory", id))
       .then(res => {
         setParams(res.data())
+        common.setLoading(false)
       })
   }, [])
 
@@ -55,8 +57,8 @@ export default function CreateData() {
         ...params,
         datetime: `${params.date}T${params.time}`
       })
-      await common.alert('수정되었습니다.')
       navigate('/')
+      common.showToast('수정되었습니다.')
     } catch (error) {
       console.error(error)
     }

@@ -1,11 +1,14 @@
 import { createContext, useContext, useState } from "react";
 import { Confirm, Alert } from "../components/Dialog";
 import Loading from "../components/Loading";
+import Toast from "../components/Toast";
 
 const CommonContext = createContext()
 
 export function CommonProvider({ children }) {
   const [loading, setLoading] = useState(false)
+  const [toast, setToast] = useState(false)
+
   const [message, setMessage] = useState('')
   const [dialog, setDialog] = useState({
     type: '',
@@ -14,7 +17,15 @@ export function CommonProvider({ children }) {
     resolve: null,
     reject: null
   })
-  
+
+  function showToast(msg) {
+    setMessage(msg)
+    setToast(true)
+    setTimeout(() => {
+      setToast(false)
+    }, 1500)
+  }
+
   function confirm(msg) {
     setMessage(msg)
     setDialog({type: 'confirm'})
@@ -55,10 +66,11 @@ export function CommonProvider({ children }) {
   }
   
   return (
-    <CommonContext.Provider value={{ confirm, alert, setLoading }}>
+    <CommonContext.Provider value={{ confirm, alert, setLoading, showToast }}>
       { children }
       { renderDialog() }
       { loading && <Loading />}
+      { toast && <Toast /> }
     </CommonContext.Provider>
   )
 }

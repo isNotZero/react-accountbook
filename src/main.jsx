@@ -10,7 +10,7 @@ import { CommonProvider } from './context/CommonContext.jsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CommonProvider>
-      <main className="container mx-auto px-4">
+      <main className="container h-screen mx-auto px-4">
         <RouterProvider router={router} />
       </main>
     </CommonProvider>

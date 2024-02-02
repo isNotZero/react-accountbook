@@ -48,8 +48,8 @@ export default function CreateData() {
         ...params,
         datetime: `${params.date}T${params.time}`
       })
-      await common.alert('추가되었습니다.')
       navigate('/')
+      common.showToast('추가되었습니다.')
     } catch (error) {
       console.error(error)
     }

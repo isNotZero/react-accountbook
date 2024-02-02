@@ -31,7 +31,7 @@ export default function App() {
   async function deleteData(id) {
     if (await common.confirm('삭제하시겠습니까?')) {
       await deleteDoc(doc(db, "usageHistory", id))
-      await common.alert('삭제되었습니다.')
+      await common.showToast('삭제되었습니다.')
       readAllData()
     }
   }
@@ -61,7 +61,7 @@ export default function App() {
       <p>Total : {data.reduce((a, b) => {
         return {amount: +a.amount + +b.amount}
       }, {amount: '0'}).amount} 원</p>
-      <dl className="flex flex-col gap-y-4 p-4 bg-gray-100">
+      <dl className="flex flex-col gap-y-4 h-[90%] p-4 bg-gray-100 overflow-y-scroll">
         { renderList() }
       </dl>
     </>
