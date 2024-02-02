@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { ElInput, ElDatetime, ElButton } from './components/Elements'
+import { useDialog } from './context/DialogContext';
 import HistoryItem from './components/HistoryItem'
 
 import { doc, collection, getDocs, addDoc, deleteDoc } from "firebase/firestore";
@@ -71,6 +72,7 @@ function CreateData() {
 
 function App() {
   const [ data, setData ] = useState([])
+  const dialog = useDialog()
 
   useEffect(readAllData, [])
   
@@ -86,10 +88,9 @@ function App() {
   }
 
   async function deleteData(id) {
-    if (confirm('삭제하시겠습니까?')) {
-      alert(id)
+    if (await dialog.confirm('삭제하시겠습니까?')) {
       await deleteDoc(doc(db, "usageHistory", id))
-      alert('삭제되었습니다')
+      await dialog.alert('삭제되었습니다.')
       readAllData()
     }
   }
@@ -106,6 +107,7 @@ function App() {
   function processData() {
 
   }
+
   return (
     <main className="container mx-auto">
       <h3 className="title">List</h3>
