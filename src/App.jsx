@@ -105,7 +105,7 @@ function App() {
   }
 
   return (
-    <main className="container mx-auto">
+    <>
       <h3 className="title">List</h3>
       <dl className="flex flex-col gap-y-4 p-4 bg-gray-100">
         {
@@ -118,7 +118,7 @@ function App() {
         return {amount: +a.amount + +b.amount}
       }, {amount: '0'}).amount} 원</p>
       <CreateData />
-    </main>
+    </>
   )
 }
 
