@@ -96,17 +96,12 @@ function App() {
     }
   }
 
-  function filteredData() {
-    return data
-  }
-  function sortedData() {
-    return data.sort((a, b) => {
-      return +b.date.split('-').join('') - +a.date.split('-').join('')
-    })
-  }
-
   function processData() {
-
+    return data.sort((a, b) => {
+      const before = +`${a.date.split('-').join('')}${a.time.split(':').join('')}`
+      const after = +`${b.date.split('-').join('')}${b.time.split(':').join('')}`
+      return after - before
+    })
   }
 
   return (
@@ -114,7 +109,7 @@ function App() {
       <h3 className="title">List</h3>
       <dl className="flex flex-col gap-y-4 p-4 bg-gray-100">
         {
-          sortedData().map(datum => {
+          processData().map(datum => {
             return <HistoryItem key={datum.id} data={datum} onClickDeleteBtn={deleteData}/>
           })
         }
