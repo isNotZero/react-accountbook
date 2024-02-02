@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.title {
+  @apply text-xl font-bold
+}
+
+.history-item {
+  @apply flex flex-wrap p-4 bg-gray-200 transition-all
+}
+
+.history-item:hover {
+  @apply bg-gray-300
+}
+
+.history-item .date {
+  @apply basis-full
+}
+
+.history-item .history {
+  @apply basis-full flex justify-between mt-2
+}

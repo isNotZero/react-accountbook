@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { ElInput, ElDatetime, ElButton } from './components/Elements'
+import HistoryItem from './components/HistoryItem'
 
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { doc, collection, getDocs, addDoc, deleteDoc } from "firebase/firestore";
 import { db } from './firebase/firebase'
 
 function getNow() {
@@ -25,7 +27,7 @@ function CreateData() {
     setParams(params => {
       return {
         ...params,
-        [type]: type === 'amount' ? +e.target.value : e.target.value
+        [type]: e.target.value
       }
     })
   }
@@ -47,35 +49,22 @@ function CreateData() {
   }
 
   return (
-    <div className="p-2 bg-gray-200">
-      <h3>Add</h3>
-      <div className="input-wrap">
-        <label htmlFor="">datetime</label>
-        <input type="date" value={params.date} onInput={(e) => handleInput(e, 'date')}/>
-        <input type="time" step="1" value={params.time} onInput={(e) => handleInput(e, 'time')}/>
+    <div className="p-4 bg-gray-200">
+      <h3 className="title">Add</h3>
+      <div className="flex flex-col gap-y-4">
+        <ElDatetime
+          label="datetime"
+          date={params.date}
+          time={params.time}
+          onInputDate={(e) => handleInput(e, 'date')}
+          onInputTime={(e) => handleInput(e, 'time')}
+        />
+        <ElInput label="amount" value={params.amount} onInput={(e) => handleInput(e, 'amount')}/>
+        <ElInput label="memo" value={params.memo} onInput={(e) => handleInput(e, 'memo')}/>
       </div>
-      <div className="input-wrap">
-        <label htmlFor="">amount</label>
-        <input type="number" value={params.amount} onInput={(e) => handleInput(e, 'amount')}/>
+      <div className="flex justify-center">
+        <ElButton onClick={addData}>add</ElButton>
       </div>
-      <div className="input-wrap">
-        <label htmlFor="">memo</label>
-        <input type="text" value={params.memo} onInput={(e) => handleInput(e, 'memo')}/>
-      </div>
-      <div className="btn-wrap">
-        <button onClick={addData}>add</button>
-      </div>
-    </div>
-  )
-}
-
-function ListItem({ data }) {
-  return (
-    <div>
-      <p>{ data.date }</p>
-      <p>{ data.time }</p>
-      <p>{ data.amount }</p>
-      <p>{ data.memo }</p>
     </div>
   )
 }
@@ -83,7 +72,9 @@ function ListItem({ data }) {
 function App() {
   const [ data, setData ] = useState([])
 
-  useEffect(() => {
+  useEffect(readAllData, [])
+  
+  function readAllData() {
     const data = []
     getDocs(collection(db, "usageHistory"))
       .then(res => {
@@ -92,19 +83,42 @@ function App() {
         })
         setData(data)
       })
-  }, [])
-  
+  }
+
+  async function deleteData(id) {
+    if (confirm('삭제하시겠습니까?')) {
+      alert(id)
+      await deleteDoc(doc(db, "usageHistory", id))
+      alert('삭제되었습니다')
+      readAllData()
+    }
+  }
+
+  function filteredData() {
+    return data
+  }
+  function sortedData() {
+    return data.sort((a, b) => {
+      return +b.date.split('-').join('') - +a.date.split('-').join('')
+    })
+  }
+
+  function processData() {
+
+  }
   return (
-    <main className="container mx-auto bg-gray-100">
-      <h3>List</h3>
-      {
-        data.map(datum => {
-          return <ListItem key={Math.random() * Math.random()} data={datum} />
-        })
-      }
-      {
-        data.length && <p>Total : {data.reduce((a, b) => a.amount + b.amount)}원</p>
-      }
+    <main className="container mx-auto">
+      <h3 className="title">List</h3>
+      <dl className="flex flex-col gap-y-4 p-4 bg-gray-100">
+        {
+          sortedData().map(datum => {
+            return <HistoryItem key={datum.id} data={datum} onClickDeleteBtn={deleteData}/>
+          })
+        }
+      </dl>
+      <p>Total : {data.reduce((a, b) => {
+        return {amount: +a.amount + +b.amount}
+      }, {amount: '0'}).amount} 원</p>
       <CreateData />
     </main>
   )
