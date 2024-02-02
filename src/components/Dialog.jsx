@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import { ElButton } from "./Elements"
 
-export function Confirm({ message, result, setResult }) {
+export function Confirm({ message, result, setDialog }) {
   const dialog = useRef(null)
 
   useEffect(() => {
@@ -10,16 +10,18 @@ export function Confirm({ message, result, setResult }) {
 
   function cancel() {
     result.resolve(false)
+    setDialog({type: ''})
     dialog.current.close()
   }
 
   function confirm() {
     result.resolve(true)
+    setDialog({type: ''})
     dialog.current.close()
   }
   
   return (
-    <dialog ref={dialog} className="w-1/3 p-4 rounded">
+    <dialog ref={dialog} className="w-1/2 p-4 rounded">
       <div className="flex justify-center">
         { message }
       </div>
@@ -31,7 +33,7 @@ export function Confirm({ message, result, setResult }) {
   )
 }
 
-export function Alert({ message, result, setResult }) {
+export function Alert({ message, result, setDialog }) {
   const dialog = useRef(null)
 
   useEffect(() => {
@@ -40,11 +42,12 @@ export function Alert({ message, result, setResult }) {
 
   function confirm() {
     result.resolve(true)
+    setDialog({type: ''})
     dialog.current.close()
   }
   
   return (
-    <dialog ref={dialog} className="w-1/3 p-4 rounded">
+    <dialog ref={dialog} className="w-1/2 p-4 rounded">
       <div className="flex justify-center">
         { message }
       </div>

@@ -91,7 +91,7 @@ function App() {
   async function deleteData(id) {
     if (await dialog.confirm('삭제하시겠습니까?')) {
       await deleteDoc(doc(db, "usageHistory", id))
-      await dialog.alert('삭제되었습니다.')
+      // await dialog.alert('삭제되었습니다.')
       readAllData()
     }
   }

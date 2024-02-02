@@ -49,7 +49,7 @@ export function CommonProvider({ children }) {
           <Confirm
             message={message}
             result={result}
-            serResult={setResult}
+            setDialog={setDialog}
           />
         )
       }
@@ -58,7 +58,7 @@ export function CommonProvider({ children }) {
           <Alert
             message={message}
             result={result}
-            serResult={setResult}
+            setDialog={setDialog}
           />
         )
       }
@@ -70,7 +70,7 @@ export function CommonProvider({ children }) {
       { children }
       { renderDialog() }
       { loading && <Loading />}
-      { toast && <Toast /> }
+      { toast && <Toast message={message} /> }
     </CommonContext.Provider>
   )
 }
