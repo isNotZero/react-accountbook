@@ -17,6 +17,7 @@ function getNow() {
 }
 
 function CreateData() {
+  const dialog = useDialog()
   const [params, setParams] = useState({
     date: getNow().date,
     time: getNow().time,
@@ -35,7 +36,7 @@ function CreateData() {
 
   async function addData() {
     if (!Object.values(params).every(value => value !== '')) {
-      alert('fuck you')
+      dialog.alert('fuck you')
       return
     }
     try {
