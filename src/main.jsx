@@ -5,14 +5,14 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { router } from "./router/router"
-import { DialogProvider } from './context/DialogContext.jsx'
+import { CommonProvider } from './context/CommonContext.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <DialogProvider>
+    <CommonProvider>
       <main className="container mx-auto px-4">
         <RouterProvider router={router} />
       </main>
-    </DialogProvider>
+    </CommonProvider>
   </React.StrictMode>,
 )

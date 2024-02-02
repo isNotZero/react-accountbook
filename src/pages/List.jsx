@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useDialog } from '../context/DialogContext';
+import { useCommon } from '../context/CommonContext';
 import { useNavigate } from 'react-router-dom';
 
 import { ElButton } from '../components/Elements'
@@ -10,12 +10,13 @@ import { db } from '../firebase/firebase'
 
 export default function App() {
   const [ data, setData ] = useState([])
-  const dialog = useDialog()
+  const common = useCommon()
   const navigate = useNavigate()
 
   useEffect(readAllData, [])
   
   function readAllData() {
+    common.setLoading(true)
     const data = []
     getDocs(collection(db, "usageHistory"))
       .then(res => {
@@ -23,13 +24,14 @@ export default function App() {
           data.push({id: item.id, ...item.data()})
         })
         setData(data)
+        common.setLoading(false)
       })
   }
 
   async function deleteData(id) {
-    if (await dialog.confirm('삭제하시겠습니까?')) {
+    if (await common.confirm('삭제하시겠습니까?')) {
       await deleteDoc(doc(db, "usageHistory", id))
-      await dialog.alert('삭제되었습니다.')
+      await common.alert('삭제되었습니다.')
       readAllData()
     }
   }
@@ -44,7 +46,12 @@ export default function App() {
       return after - before
     })
   }
-
+  
+  function renderList() {
+    return processData().map(datum => {
+      return <HistoryItem key={datum.id} data={datum} onClickModifyBtn={() => onClickModifyBtn(datum.id)} onClickDeleteBtn={deleteData}/>
+    })
+  }
   return (
     <>
       <div className="flex justify-between">
@@ -55,11 +62,7 @@ export default function App() {
         return {amount: +a.amount + +b.amount}
       }, {amount: '0'}).amount} 원</p>
       <dl className="flex flex-col gap-y-4 p-4 bg-gray-100">
-        {
-          processData().map(datum => {
-            return <HistoryItem key={datum.id} data={datum} onClickModifyBtn={() => onClickModifyBtn(datum.id)} onClickDeleteBtn={deleteData}/>
-          })
-        }
+        { renderList() }
       </dl>
     </>
   )

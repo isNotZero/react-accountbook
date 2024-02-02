@@ -1,9 +1,11 @@
 import { createContext, useContext, useState } from "react";
 import { Confirm, Alert } from "../components/Dialog";
+import Loading from "../components/Loading";
 
-const DialogContext = createContext()
+const CommonContext = createContext()
 
-export function DialogProvider({ children }) {
+export function CommonProvider({ children }) {
+  const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [dialog, setDialog] = useState({
     type: '',
@@ -53,13 +55,14 @@ export function DialogProvider({ children }) {
   }
   
   return (
-    <DialogContext.Provider value={{ confirm, alert }}>
+    <CommonContext.Provider value={{ confirm, alert, setLoading }}>
       { children }
-      { renderDialog() } 
-    </DialogContext.Provider>
+      { renderDialog() }
+      { loading && <Loading />}
+    </CommonContext.Provider>
   )
 }
 
-export function useDialog() {
-  return useContext(DialogContext)
+export function useCommon() {
+  return useContext(CommonContext)
 }

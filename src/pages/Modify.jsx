@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { ElInput, ElDatetime, ElButton } from '../components/Elements'
-import { useDialog } from '../context/DialogContext';
+import { useCommon } from '../context/CommonContext';
 
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase'
@@ -21,7 +21,7 @@ export default function CreateData() {
   const { id } = useLocation().state
   const navigate = useNavigate()
 
-  const dialog = useDialog()
+  const common = useCommon()
   const [params, setParams] = useState({
     date: getNow().date,
     time: getNow().time,
@@ -47,7 +47,7 @@ export default function CreateData() {
 
   async function updateData() {
     if (!Object.values(params).every(value => value !== '')) {
-      dialog.alert('fuck you')
+      common.alert('fuck you')
       return
     }
     try {
@@ -55,7 +55,7 @@ export default function CreateData() {
         ...params,
         datetime: `${params.date}T${params.time}`
       })
-      await dialog.alert('수정되었습니다.')
+      await common.alert('수정되었습니다.')
       navigate('/')
     } catch (error) {
       console.error(error)
