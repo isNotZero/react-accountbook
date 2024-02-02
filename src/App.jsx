@@ -44,7 +44,7 @@ function CreateData() {
         ...params,
         datetime: `${params.date}T${params.time}`
       })
-      alert('complete')
+      dialog.alert('추가되었습니다.')
     } catch (error) {
       console.error(error)
     }

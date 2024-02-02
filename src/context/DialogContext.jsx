@@ -30,27 +30,32 @@ export function DialogProvider({ children }) {
   }
 
   function renderDialog() {
+    switch(dialog.type) {
+      case 'confirm': {
+        return (
+          <Confirm
+            message={message}
+            result={result}
+            serResult={setResult}
+          />
+        )
+      }
+      case 'alert': {
+        return (
+          <Alert
+            message={message}
+            result={result}
+            serResult={setResult}
+          />
+        )
+      }
+    }
   }
   
   return (
     <DialogContext.Provider value={{ confirm, alert }}>
       { children }
-      {
-        dialog.type === 'confirm' &&
-        <Confirm
-          message={message}
-          result={result}
-          serResult={setResult}
-        />
-      }
-      {
-        dialog.type === 'alert' &&
-        <Alert
-          message={message}
-          result={result}
-          serResult={setResult}
-        />
-      } 
+      { renderDialog() } 
     </DialogContext.Provider>
   )
 }
