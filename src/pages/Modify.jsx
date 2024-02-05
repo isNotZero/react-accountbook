@@ -77,6 +77,9 @@ export default function CreateData() {
         />
         <ElInput label="금액" value={params.amount} onInput={(e) => handleInput(e, 'amount')}/>
         <ElInput label="메모" value={params.memo} onInput={(e) => handleInput(e, 'memo')}/>
+        {
+          params.imageURL && <img src={params.imageURL} alt="" className="block w-1/6 h-1/6" />
+        }
       </div>
       <div className="flex justify-center">
         <ElButton onClick={updateData}>수정</ElButton>

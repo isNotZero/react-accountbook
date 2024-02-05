@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
-
-import { ElInput, ElDatetime, ElButton } from '../components/Elements'
+import { ElInput, ElFile, ElDatetime, ElButton } from '../components/Elements'
 import { useCommon } from '../context/CommonContext';
 
-import { collection, addDoc } from "firebase/firestore";
-import { db } from '../firebase/firebase'
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { db, storage } from '../firebase/firebase'
 
 function getNow() {
   const offset = new Date().getTimezoneOffset() * 60000
@@ -26,8 +26,13 @@ export default function CreateData() {
     date: getNow().date,
     time: getNow().time,
     amount: 0,
-    memo: ''
+    memo: '',
   })
+  const [file, setFile] = useState({})
+
+  function handleFile(e) {
+    setFile(() => e.target.files[0])
+  }
 
   function handleInput(e, type) {
     setParams(params => {
@@ -44,9 +49,17 @@ export default function CreateData() {
       return
     }
     try {
-      await addDoc(collection(db, "usageHistory"), {
+      const setDataRef = doc(collection(db, "usageHistory"))
+      let imageURL = ''
+      if (file.name) {
+        const storageRef = ref(storage, `receipt/${setDataRef.id}.${file.name.split('.').at(-1)}`);
+        await uploadBytes(storageRef, file)
+        imageURL = await getDownloadURL(storageRef)
+      }
+      await setDoc(setDataRef, {
         ...params,
-        datetime: `${params.date}T${params.time}`
+        datetime: `${params.date}T${params.time}`,
+        imageURL
       })
       navigate('/')
       common.showToast('추가되었습니다.')
@@ -68,6 +81,7 @@ export default function CreateData() {
         />
         <ElInput label="금액" value={params.amount} onInput={(e) => handleInput(e, 'amount')}/>
         <ElInput label="메모" value={params.memo} onInput={(e) => handleInput(e, 'memo')}/>
+        <ElFile label="영수증" onInput={handleFile}/>
       </div>
       <div className="flex justify-center">
         <ElButton onClick={addData}>추가</ElButton>

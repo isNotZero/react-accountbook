@@ -6,7 +6,8 @@ import { ElButton } from '../components/Elements'
 import HistoryItem from '../components/HistoryItem'
 
 import { doc, collection, getDocs, deleteDoc } from "firebase/firestore";
-import { db } from '../firebase/firebase'
+import { ref, deleteObject } from "firebase/storage";
+import { db, storage } from '../firebase/firebase'
 
 export default function App() {
   const [ data, setData ] = useState([])
@@ -30,9 +31,20 @@ export default function App() {
 
   async function deleteData(id) {
     if (await common.confirm('삭제하시겠습니까?')) {
-      await deleteDoc(doc(db, "usageHistory", id))
-      common.showToast('삭제되었습니다.')
-      readAllData()
+      const [{ imageURL }] = data.filter(datum => datum.id === id)
+      const extension = imageURL.split('?').at(0).split('.').at('-1')
+      try {
+        if (imageURL) {
+          const imageRef = ref(storage, `receipt/${id}.${extension}`);
+          await deleteObject(imageRef)
+        }
+        await deleteDoc(doc(db, "usageHistory", id))
+        common.showToast('삭제되었습니다.')
+        readAllData()
+
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
   function onClickModifyBtn(id) {
@@ -52,6 +64,7 @@ export default function App() {
       return <HistoryItem key={datum.id} data={datum} onClickModifyBtn={() => onClickModifyBtn(datum.id)} onClickDeleteBtn={deleteData}/>
     })
   }
+
   return (
     <>
       <div className="flex justify-between">

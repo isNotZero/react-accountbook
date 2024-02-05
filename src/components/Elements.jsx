@@ -7,6 +7,15 @@ export function ElInput({ type, label, value, onInput }) {
   )
 }
 
+export function ElFile({ label, onInput }) {
+  return (
+    <div className="flex justify-between p-4 bg-gray-300 rounded">
+      <label htmlFor="">{ label }</label>
+      <input className="rounded border-solid border border-gray-900" type='file' onInput={ onInput }/>
+    </div>
+  )
+}
+
 export function ElCheck({ label, checked, onInput }) {
   return (
     <div>
